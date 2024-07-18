@@ -51,5 +51,6 @@ if __name__ == '__main__':
     db_util = DBUtil()
     prospect_list_query = "select name from prospect"
     results = db_util.execute_query(prospect_list_query)
+    print("List of prospect name available in the DB -")
     for result in results:
         print(result[0])
