@@ -1,6 +1,9 @@
+import inspect
+import os
+
 import boto3, json
 
-from common.logging_util import get_std_logger
+from common.logging_util import get_std_logger, get_ai_mon_logger
 from config_env import ConfigEnv
 
 DEFAULT_SYSTEM_MESSAGE = "You are a helpful AI assistant. You strive to be factual and accurate."
@@ -25,6 +28,17 @@ class AIBedrockClaude:
                       max_tokens: int = 8000) -> str:
         if model_id not in self.amazon_models:
             raise ValueError(f"Model name {model_id} not found in list of available models")
+
+        # AI monitoring logging is done to a separate file - logs/ai_monitoring.log
+        if ConfigEnv.AI_MONITORING:
+            self.logger.info("AI_MONITORING Enabled, check ai_monitoring.log file for details")
+            ai_monitor_logger = get_ai_mon_logger(ai_mon_logging=True)
+            stack = inspect.stack()
+            caller_file = stack[1][1]
+            caller_file_line_num = stack[1][2]
+            caller_func = stack[1][3]
+            ai_monitor_logger.info(
+                f"caller={os.path.basename(caller_file)} - {caller_func}():{caller_file_line_num}, model_id={model_id}, prompt_length={len(prompt.split())}, system_msg_length={len(system_msg.split())}")
 
         message = self.__generate_message(prompt)
         body = self.__create_body(message=message, system_msg=system_msg, max_tokens=max_tokens)
