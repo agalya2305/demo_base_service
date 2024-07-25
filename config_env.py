@@ -32,5 +32,6 @@ class ConfigEnv:
     PINECONE_NAMESPACE = os.getenv('PINECONE_NAMESPACE')
     OPENAI_EMBEDDING_MODEL = os.getenv('OPENAI_EMBEDDING_MODEL')
 
+    AI_MONITORING = os.getenv('AI_MONITORING')
 
         
